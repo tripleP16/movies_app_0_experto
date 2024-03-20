@@ -29,15 +29,28 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   @override
   void initState() {
     super.initState();
+    _initMovies();
+  }
+
+  void _initMovies() {
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
     ref.read(popularMoviesProvider.notifier).loadNextPage();
+    ref.read(upcomingMoviesProvider.notifier).loadNextPage();
+    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
   }
 
   @override
   Widget build(BuildContext context) {
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
+
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+
     final popularMovies = ref.watch(popularMoviesProvider);
+
+    final upcomingMovies = ref.watch(upcomingMoviesProvider);
+
+    final topRatedMovies = ref.watch(topRatedMoviesProvider);
+
     if (slideShowMovies.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -66,10 +79,10 @@ class _HomeViewState extends ConsumerState<_HomeView> {
               ),
               MovieHorizontalListView(
                 title: 'Proximamente',
-                movies: nowPlayingMovies,
+                movies: upcomingMovies,
                 subtitle: 'En este mes',
                 loadNextPage: () {
-                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  ref.read(upcomingMoviesProvider.notifier).loadNextPage();
                 },
               ),
               MovieHorizontalListView(
@@ -81,10 +94,10 @@ class _HomeViewState extends ConsumerState<_HomeView> {
               ),
               MovieHorizontalListView(
                 title: 'Mejor calificadas',
-                movies: nowPlayingMovies,
+                movies: topRatedMovies,
                 subtitle: 'Desde siempre',
                 loadNextPage: () {
-                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  ref.read(topRatedMoviesProvider.notifier).loadNextPage();
                 },
               ),
               const SizedBox(
