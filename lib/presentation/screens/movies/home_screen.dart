@@ -41,6 +41,11 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(initialLoadingProvider);
+    if (isLoading) {
+      return FullScreenLoader();
+    }
+
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
 
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
@@ -51,11 +56,6 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
 
-    if (slideShowMovies.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
     return CustomScrollView(
       slivers: [
         const SliverAppBar(
