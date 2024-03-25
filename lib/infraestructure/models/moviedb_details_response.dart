@@ -12,8 +12,8 @@ class MovieDbDetailsResponse {
   final String overview;
   final double popularity;
   final String posterPath;
-  final List<ProductionCompany> productionCompanies;
-  final List<ProductionCountry> productionCountries;
+  final List<ProductionCompany>? productionCompanies;
+  final List<ProductionCountry>? productionCountries;
   final DateTime releaseDate;
   final int revenue;
   final int runtime;
@@ -70,11 +70,13 @@ class MovieDbDetailsResponse {
         overview: json["overview"],
         popularity: json["popularity"]?.toDouble(),
         posterPath: json["poster_path"],
-        productionCompanies: List<ProductionCompany>.from(
-            json["production_companies"]
+        productionCompanies: json["production_companies"] == null
+            ? null
+            : List<ProductionCompany>.from(json["production_companies"]
                 .map((x) => ProductionCompany.fromJson(x))),
-        productionCountries: List<ProductionCountry>.from(
-            json["production_countries"]
+        productionCountries: json["production_countries"] == null
+            ? null
+            : List<ProductionCountry>.from(json["production_countries"]
                 .map((x) => ProductionCountry.fromJson(x))),
         releaseDate: DateTime.parse(json["release_date"]),
         revenue: json["revenue"],
@@ -103,10 +105,12 @@ class MovieDbDetailsResponse {
         "overview": overview,
         "popularity": popularity,
         "poster_path": posterPath,
-        "production_companies":
-            List<dynamic>.from(productionCompanies.map((x) => x.toJson())),
-        "production_countries":
-            List<dynamic>.from(productionCountries.map((x) => x.toJson())),
+        "production_companies": productionCompanies == null
+            ? null
+            : List<dynamic>.from(productionCompanies!.map((x) => x.toJson())),
+        "production_countries": productionCountries == null
+            ? null
+            : List<dynamic>.from(productionCountries!.map((x) => x.toJson())),
         "release_date":
             "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}",
         "revenue": revenue,
@@ -173,7 +177,7 @@ class Genre {
 
 class ProductionCompany {
   final int id;
-  final String logoPath;
+  final String? logoPath;
   final String name;
   final String originCountry;
 
