@@ -1,7 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movies_app/domain/entities/movie.dart';
 import 'package:movies_app/presentation/providers/movies/movie_info_provider.dart';
+import 'package:movies_app/presentation/providers/providers.dart';
 import 'package:movies_app/presentation/widgets/movies/movies_widgets.dart';
 
 class MovieScreen extends ConsumerStatefulWidget {
@@ -18,6 +20,7 @@ class _MovieScreenState extends ConsumerState<MovieScreen> {
   void initState() {
     super.initState();
     ref.read(movieInfoProvider.notifier).loadMovie(widget.movieId);
+    ref.read(actorsProvider.notifier).loadActors(widget.movieId);
   }
 
   @override
@@ -96,7 +99,6 @@ class _MovieDetails extends StatelessWidget {
             )
           ]),
         ),
-
         Padding(
           padding: const EdgeInsets.all(8),
           child: Wrap(
@@ -111,12 +113,69 @@ class _MovieDetails extends StatelessWidget {
             ],
           ),
         ),
+        _ActorsByMovie(movieId: movie.id.toString()),
         const SizedBox(
-          height: 100,
+          height: 50,
         ),
-
-        //TODO: mostrar Actores
       ],
+    );
+  }
+}
+
+class _ActorsByMovie extends ConsumerWidget {
+  final String movieId;
+
+  const _ActorsByMovie({required this.movieId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actorsByMovie = ref.watch(actorsProvider);
+
+    if (actorsByMovie[movieId] == null) {
+      return const CircularProgressIndicator();
+    }
+
+    final actors = actorsByMovie[movieId]!;
+
+    return SizedBox(
+      height: 300,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: actorsByMovie.length,
+          itemBuilder: (context, index) {
+            final actor = actors[index];
+            return Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 135,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: FadeInRight(
+                      child: Image.network(
+                        actor.profilePath,
+                        height: 180,
+                        width: 135,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    actor.name,
+                    maxLines: 2,
+                  ),
+                  Text(
+                    actor.character ?? '',
+                    maxLines: 2,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis),
+                  )
+                ],
+              ),
+            );
+          }),
     );
   }
 }

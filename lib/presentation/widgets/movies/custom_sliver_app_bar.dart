@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_app/domain/entities/movie.dart';
 import 'package:movies_app/presentation/widgets/shared/shared_widgets.dart';
@@ -41,6 +42,10 @@ class _AppBarBackground extends StatelessWidget {
           child: Image.network(
             movie.posterPath,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress != null) const SizedBox();
+              return FadeIn(child: child);
+            },
           ),
         ),
         const SizedBox.expand(
